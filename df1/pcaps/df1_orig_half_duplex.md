@@ -32,7 +32,7 @@ packets. In this example, there are three commands, and each must have a differe
 	- FNC: Used with the CMD byte, this byte determines which command is sent. The CMD byte specifies a group of
 commands, and the FNC byte specifies a command within that group of commands. In this example,
 the FNC byte specifies command aa of command group 0F. (This is the word range read command.) Protected typed logical write with three address fields.
-- Offset 9 (0207)- 0x0207: ADDR (address of memory location, 2 bytes).
+- Offset 9 & 10 (0207)- 0x0207: ADDR (address of memory location, 2 bytes).
 	- ADDR: Specifies the PL-2 data table address where the unprotected read starts. The combination of these two
 bytes points to a byte address. Since the PL-2 works in word (2 byte) increments, the address should
 specify an even number of bytes. The address must be transferred low byte first. 
