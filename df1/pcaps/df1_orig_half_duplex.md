@@ -8,7 +8,7 @@
 100200000f000139aa02078905004934
 ```
 
-See 14-6/14-7 (pp 238-239) of (DF1 Protocol Manual)[https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/1770-rm516_-en-p.pdf]
+See 14-6/14-7 (pp 238-239) of [DF1 Protocol Manual](https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/1770-rm516_-en-p.pdf)
 
 - Offset 0 (10)- 0x10: DLE
 - OffSet 1 (02)- 0x02: STX
