@@ -3,9 +3,9 @@
 [DF1 Manual](https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/1770-rm516_-en-p.pdf)
 
 
-## Transmission Symbols 
+## Half_Duplex
 
-### Half-Duplex Protocol 
+### Transmission Symbols 
 
 | Abbreviation | Hexadecimal Value | Binary Value |
 |:------------:|:-----------------:|:------------:|
@@ -17,6 +17,8 @@
 |ACK           |06                 |0000 0110     |
 |DLE           |10                 |0001 0000     |
 |NAK           |0F                 |0000 1111     |
+
+### Transmission Symbols Explanations
 
 |Symbol | Type           |                          Meaning|
 |:-----:|:--------------:|:-------------------------------:|
@@ -30,3 +32,12 @@
 |STN   |data symbol |Station number of the slave node on your half-duplex link.|
 |APP DATA| data symbol| Single characters having values 00-0F and 11-FF. Includes data from application layer including user programs and common application routines. A data 1016 is sent as 10 10 (DLE DLE).|
 |DLE DLE| data symbol |Represents the data value or STN value of 1016. See APP DATA.|
+
+### Message Packet Format
+
+```
+            --------------------------------------------------------------
+            | DST | SRC | CMD | STS |  TNS  | FNC |  ADDR  | SIZE | DATA | 
+            --------------------------------------------------------------
+Size (Bytes): 1     1      1     1      2      1       2      1        1    
+```
