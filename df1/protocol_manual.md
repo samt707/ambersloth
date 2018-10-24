@@ -55,3 +55,9 @@ Size (Bytes): 1     1      1     1      2      1       2      1        1
 |SIZE| number of bytes to be transferred| page 6-8|
 |TNS| transaction number (2 bytes)| page 6-7|
 |DATA| data values being transferred by the message The number of data bytes in a message depends on the command or function being executed.| Ch. 7|
+
+### Communication Commands (7-2,7-3 pp.89-90)
+
+![comcmd1](/df1/img/comcmd1.png)
+![comcmd2](/df1/img/comcmd2.png)
+
