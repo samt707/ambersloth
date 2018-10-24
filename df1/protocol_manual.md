@@ -3,7 +3,7 @@
 [DF1 Manual](https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/1770-rm516_-en-p.pdf)
 
 
-## Half_Duplex
+## Half-Duplex
 
 ### Transmission Symbols (2-6 pp. 35)
 
@@ -41,3 +41,16 @@
             --------------------------------------------------------------
 Size (Bytes): 1     1      1     1      2      1       2      1        1    
 ```
+
+|Field      |Contents   |See   |
+|:---------:|:---------:|:----:|
+|DST|  destination node for the message|page 6-4|
+|SRC |source node of the message| page 6-4|
+|FNC      | function code| page 6-5 
+|CMD| command code |page 6-5|
+|ADDR    | address of memory location (2 bytes)| page 6-8|
+|STS |status code| page 6-6 
+|EXT STS |extended status code |page 6-6|
+|SIZE| number of bytes to be transferred| page 6-8|
+|TNS| transaction number (2 bytes)| page 6-7|
+|DATA| data values being transferred by the message The number of data bytes in a message depends on the command or function being executed.| Ch. 7|
