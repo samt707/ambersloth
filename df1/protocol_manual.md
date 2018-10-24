@@ -5,7 +5,7 @@
 
 ## Half_Duplex
 
-### Transmission Symbols 
+### Transmission Symbols (2-6 pp. 35)
 
 | Abbreviation | Hexadecimal Value | Binary Value |
 |:------------:|:-----------------:|:------------:|
@@ -18,7 +18,7 @@
 |DLE           |10                 |0001 0000     |
 |NAK           |0F                 |0000 1111     |
 
-### Transmission Symbols Explanations
+### Transmission Symbols Explanations (2-7 pp. 36)
 
 |Symbol | Type           |                          Meaning|
 |:-----:|:--------------:|:-------------------------------:|
