@@ -31,8 +31,25 @@ packets. In this example, there are three commands, and each must have a differe
 - Offset 8 (aa)- 0xaa: FNC (Function Code)
 	- FNC: Used with the CMD byte, this byte determines which command is sent. The CMD byte specifies a group of
 commands, and the FNC byte specifies a command within that group of commands. In this example,
-the FNC byte specifies command aa of command group 0F. (This is the word range read command.) Protected typed logical write with three address fields.
-- Offset 9 & 10 (0207)- 0x0207: ADDR (address of memory location, 2 bytes).
-	- ADDR: Specifies the PL-2 data table address where the unprotected read starts. The combination of these two
-bytes points to a byte address. Since the PL-2 works in word (2 byte) increments, the address should
-specify an even number of bytes. The address must be transferred low byte first. 
+the FNC byte specifies command aa of command group 0F. (This is the word range read command.) Protected typed logical write with three address fields. Writes data to a logical address in a SLC processor.
+- Offset 9 (02)- 0x02: Byte Size
+	- Byte Size: The size of data to be read (in bytes), not including the address fields
+or other overhead bytes. In this case it is 2 bytes. 
+- Offset 10 (07)- 0x07: File Number
+	- Addresses files 0-254 only. For higher addresses, setting this byte to FF expands this field to three bytes total. Use the second and third bytes for the expanded file address (low address byte first). It is 7 in this case.
+- Offset 11 (89)- 0x89: File Type
+	- Use one of the these values for this field. Do not use any other values; doing so may result in unpredictable results.
+	
+
+|Hex Value|Definition|
+|:-----:|:------:|
+|80-83 hex| reserved|
+|84 hex| status|
+|85 hex| bit|
+|86 hex| timer|
+|87 hex| counter|
+|88 hex| control|
+|89 hex| integer|
+|8A hex| floating point|
+|8D hex| string|
+|8E hex| ASCII|
