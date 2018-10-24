@@ -33,7 +33,8 @@
 |APP DATA| data symbol| Single characters having values 00-0F and 11-FF. Includes data from application layer including user programs and common application routines. A data 1016 is sent as 10 10 (DLE DLE).|
 |DLE DLE| data symbol |Represents the data value or STN value of 1016. See APP DATA.|
 
-### Message Packet Format
+### Message Packet Format (6-3 pp. 82)
+
 
 ```
             --------------------------------------------------------------
