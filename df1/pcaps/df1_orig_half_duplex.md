@@ -60,3 +60,16 @@ or other overhead bytes. In this case it is 2 bytes.
 |8A hex| floating point|
 |8D hex| string|
 |8E hex| ASCII|
+
+- Offset 12 (05)- 0x05: Element Number
+	- Addresses elements 0-254 only. For higher addresses, setting this
+byte to FF expands this field to three bytes. Use the second and third
+bytes for the expanded element address (low address byte first).
+
+- Offset 13 (00)- 0x00: Sub-element Number
+	- Addresses sub-elements 0-254 only. For higher addresses, setting
+this byte to FF expands this field to three bytes. Use the second and
+third bytes for the expanded sub-element address (low address byte
+first).
+
+- Offset 14 & 15(4934)- 0x4934: Data
