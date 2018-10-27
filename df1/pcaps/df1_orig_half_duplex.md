@@ -3,13 +3,13 @@
 ## Packet 1
 
 ### Byte sequence 
-- 17-8 (pp. 105) 
-	- Protected Logical Write with Three Adress Fields)
 
 ```
 5bbe04680001637804000000100200000f000139aa02078905004934
 ```
 #### Data 
+- 17-8 (pp. 105) 
+	- Protected Logical Write with Three Adress Fields)
 
 ```
 100200000f000139aa02078905004934
