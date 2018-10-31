@@ -73,3 +73,55 @@ third bytes for the expanded sub-element address (low address byte
 first).
 
 - Offset 14 & 15(4934)- 0x4934: Data
+
+
+## Packet 2
+
+### Data
+
+```
+1003f9
+```
+
+- Offset 0 (10)- 0x10: DLE
+- Offset 1 (03)- 0x03: ETX
+- Offset 2 (f9)- 0xf9: 
+
+## Packet 3
+
+### Data
+
+```
+1005
+```
+- Offset 0 (10)- 0x10: DLE
+- Offset 1 (05)- 0x05: ENQ
+
+## Packet 4
+
+### Data
+
+```
+1005
+```
+- Offset 0 (10)- 0x10: DLE
+- Offset 1 (05)- 0x05: ENQ
+
+## Packet 5
+
+### Data
+
+```
+1005
+```
+- Offset 0 (10)- 0x10: DLE
+- Offset 1 (05)- 0x05: ENQ
+
+## Packet 6
+
+### Data
+
+```
+10:02:00:00:0f:00:11:39:a2:02:07:89:01:00
+```
+- Offset 0 (10)- 0x10: DLE
