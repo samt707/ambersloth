@@ -13,6 +13,9 @@
 #define DF1_TRANS_SYM 1
 #define DF1_DST 3
 
+#define DF1_CMD_LOG_READ 0x0fa2;
+#define DF1_CMD_LOG_WRITE 0x0faa;
+
 
 //Call to register protocol with wireshark
 void proto_register_df1(void);
@@ -72,15 +75,19 @@ static const string_string ubiquiti_vals[] = {
 static int
 dissect_df1(tvbuff_t *df1_tvb, packet_info *pinfo, proto_tree *tree, void *data _U_)
 {
-    proto_tree  *df1_tree, *tlv_tree;
-    proto_item  *df1_item, *tlv_item;
-    guint32     df1_length;
-    guint32 	df1_type;
+    proto_tree  *df1_tree, *cmd_tree;
+    proto_item  *df1_item; //, *tlv_item;
+    //guint32     df1_length;
+    //guint32 	df1_type;
     guint32     trans_sym;
-    guint32     symbol;
+    //guint32     symbol;
+    guint32 	df1_cmd;
+    guint32	df1_fnc;
+    short 	df1_cmd_fnc;    
+
     gint offset = 11;
-    gchar *uValue;
-    const gchar *uModel;
+    //gchar *uValue;
+    //const gchar *uModel;
 
 
     col_set_str(pinfo->cinfo, COL_PROTOCOL, "DF1");
@@ -91,33 +98,45 @@ dissect_df1(tvbuff_t *df1_tvb, packet_info *pinfo, proto_tree *tree, void *data 
     df1_tree = proto_item_add_subtree(df1_item, ett_df1);	
     
     proto_tree_add_item_ret_uint(df1_tree, hf_df1_transmission_symbols, df1_tvb, offset, 2, ENC_BIG_ENDIAN, &trans_sym);
-    
-    proto_tree_add_item(df1_tree, hf_df1_dst, df1_tvb, offset + 2, 1, ENC_BIG_ENDIAN);
-    
-    proto_tree_add_item(df1_tree, hf_df1_src, df1_tvb, offset + 3, 1, ENC_BIG_ENDIAN);
 
-    proto_tree_add_item(df1_tree, hf_df1_cmd, df1_tvb, offset + 4, 1, ENC_BIG_ENDIAN);
-    proto_tree_add_item(df1_tree, hf_df1_sts, df1_tvb, offset + 5, 1, ENC_BIG_ENDIAN);
-    proto_tree_add_item(df1_tree, hf_df1_tns, df1_tvb, offset + 6, 2, ENC_BIG_ENDIAN);
-    proto_tree_add_item(df1_tree, hf_df1_fnc, df1_tvb, offset + 8, 1, ENC_BIG_ENDIAN);
-
+    offset+=2;
 /*
-   switch(trans_sym){
-   	case 0x1000:
-		proto_item_set_text(tlv_tree, "%s", val_to_str_const(df1_type, type_vals, "Unknown type"));
+    if(tvb_reported_length_remaining(df1_tvb, offset+1) <= 0){
+        proto_tree_add_item(df1_tree, hf_df1_data, df1_tvb, offset, 1, ENC_BIG_ENDIAN);
+    	return tvb_captured_length(df1_tvb);
+    }
+*/
+    while(tvb_reported_length_remaining(df1_tvb, offset) > 0){
+	    if(tvb_reported_length_remaining(df1_tvb, offset) == 1){
+		proto_tree_add_item(df1_tree, hf_df1_data, df1_tvb, offset, 1, ENC_BIG_ENDIAN);
+		return tvb_captured_length(df1_tvb);
+	    
+	    } 
+	    proto_tree_add_item(df1_tree, hf_df1_dst, df1_tvb, offset, 1, ENC_BIG_ENDIAN);
+	    
+	    proto_tree_add_item(df1_tree, hf_df1_src, df1_tvb, offset + 1, 1, ENC_BIG_ENDIAN);
 
-   }
-    
-    offset+=4;
+	    proto_tree_add_item_ret_uint(df1_tree, hf_df1_cmd, df1_tvb, offset + 2, 1, ENC_BIG_ENDIAN, &df1_cmd);
+	    proto_tree_add_item(df1_tree, hf_df1_sts, df1_tvb, offset + 3, 1, ENC_BIG_ENDIAN);
+	    proto_tree_add_item(df1_tree, hf_df1_tns, df1_tvb, offset + 4, 2, ENC_BIG_ENDIAN);
+	    proto_tree_add_item_ret_uint(df1_tree, hf_df1_fnc, df1_tvb, offset + 6, 1, ENC_BIG_ENDIAN, &df1_fnc);
+           
+	    offset+=7;
+ 	    df1_cmd_fnc = (df1_cmd << 8) | (df1_fnc);
+	    printf("%x\n",df1_cmd_fnc);	
+  	    switch(df1_cmd_fnc){
+            	case DF1_CMD_LOG_READ:
+			cmd_tree = proto_tree_add_subtree(df1_tree, df1_tvb, offset, -1, ett_ubdp_tlv, &tlv_item, "");
+			proto_tree_add_item_ret_uint(tlv_tree, hf_ubdp_type, ubdp_tvb, offset + UB_TLV_TYPE, 1, ENC_BIG_ENDIAN, &ubdp_type);
+			proto_item_set_text(tlv_tree, "%s", val_to_str_const(ubdp_type, type_vals, "Unknown type"));
+			proto_tree_add_item_ret_uint(tlv_tree, hf_ubdp_len, ubdp_tvb, offset + UB_TLV_LENGTH, 2, ENC_BIG_ENDIAN, &ubdp_length);
+	    }
 
-    tlv_tree = proto_tree_add_subtree(df1_tree, df1_tvb, offset + DF1_TLV_TYPE, -1, ett_df1_tlv, &tlv_item, "");
-    proto_tree_add_item_ret_uint(tlv_tree, hf_df1_transmission_symbols, df1_tvb, offset + DF1_TLV_TYPE, 1, ENC_BIG_ENDIAN, &df1_type);
-    proto_item_set_text(tlv_tree, "%s", val_to_str_const(df1_type, type_vals, "Unknown type"));
-    
-    proto_tree_add_item_ret_uint(tlv_tree, hf_df1_dst, df1_tvb, offset + DF1_TLV_LENGTH, 2, ENC_BIG_ENDIAN, &df1_length);
-*/    
-   return tvb_captured_length(df1_tvb);
+	    //proto_item_set_len(tlv_item, df1_length + 3);
+            offset += 14;
+    }
 
+    return tvb_captured_length(df1_tvb);
 
 }
 
@@ -132,8 +151,8 @@ proto_register_df1(void)
         { &hf_df1_cmd, {"Command","df1.cmd", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
         { &hf_df1_sts, {"Status Code","df1.sts", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
         { &hf_df1_tns, {"Transaction Number","df1.tns", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL}},
-        { &hf_df1_fnc, {"Function Code","df1.fnc", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}}
-
+        { &hf_df1_fnc, {"Function Code","df1.fnc", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
+	{ &hf_df1_data, {"Data","df1.data",FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}}
     };
 
     static gint *ett[] = {
