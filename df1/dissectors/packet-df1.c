@@ -13,8 +13,8 @@
 #define DF1_TRANS_SYM 1
 #define DF1_DST 3
 
-#define DF1_CMD_LOG_READ 0x0fa2;
-#define DF1_CMD_LOG_WRITE 0x0faa;
+#define DF1_CMD_LOG_READ 0x0fa2
+#define DF1_CMD_LOG_WRITE 0x0faa
 
 
 //Call to register protocol with wireshark
@@ -33,8 +33,14 @@ static int hf_df1_sts = -1;
 static int hf_df1_tns = -1;
 static int hf_df1_fnc = -1;
 static int hf_df1_adr = -1;
-static int hf_df1_size = -1;
+//static int hf_df1_size = -1;
 static int hf_df1_data = -1;
+static int hf_df1_bytesize = -1;
+static int hf_df1_filenum = -1;
+static int hf_df1_filetype = -1;
+static int hf_df1_elemnum = -1;
+static int hf_df1_subelemnum = -1;
+static int hf_df1_specdata = -1;
 
 //Seems important maybe?? 
 static gint ett_df1 = -1;
@@ -65,12 +71,36 @@ static const value_string trans_types[] = {
 
 };
 
-/* Not sure what to do with this
-static const string_string ubiquiti_vals[] = {
-    {"UP4",     "UP4: UniFi Phone-X"},
-    {NULL,       NULL}
+
+static const value_string cmd_names[] = {
+    {0x0fa2, "0F A2: Protected typed logical read with three address fields"},
+    {0x0faa, "0F AA: Protected typed logical write with three address fields"},
+    {0, NULL}
+
+
 };
-*/
+
+
+static const value_string file_type[] = {
+    {0x80, "Reserved"},
+    {0x81, "Reserved"},
+    {0x82, "Reserved"},
+    {0x83, "Reserved"},
+    {0x84, "Status"},
+    {0x85, "Bit"},
+    {0x86, "Timer"},
+    {0x87, "Counter"},
+    {0x88, "Control"},
+    {0x89, "Integer"},
+    {0x8A, "Floating Point"},
+    {0x8D, "String"},
+    {0x8E, "ASCII"},
+    {0, "NULL"},
+
+
+
+};
+
 
 static int
 dissect_df1(tvbuff_t *df1_tvb, packet_info *pinfo, proto_tree *tree, void *data _U_)
@@ -123,13 +153,27 @@ dissect_df1(tvbuff_t *df1_tvb, packet_info *pinfo, proto_tree *tree, void *data 
            
 	    offset+=7;
  	    df1_cmd_fnc = (df1_cmd << 8) | (df1_fnc);
-	    printf("%x\n",df1_cmd_fnc);	
   	    switch(df1_cmd_fnc){
             	case DF1_CMD_LOG_READ:
-			cmd_tree = proto_tree_add_subtree(df1_tree, df1_tvb, offset, -1, ett_ubdp_tlv, &tlv_item, "");
-			proto_tree_add_item_ret_uint(tlv_tree, hf_ubdp_type, ubdp_tvb, offset + UB_TLV_TYPE, 1, ENC_BIG_ENDIAN, &ubdp_type);
-			proto_item_set_text(tlv_tree, "%s", val_to_str_const(ubdp_type, type_vals, "Unknown type"));
-			proto_tree_add_item_ret_uint(tlv_tree, hf_ubdp_len, ubdp_tvb, offset + UB_TLV_LENGTH, 2, ENC_BIG_ENDIAN, &ubdp_length);
+			cmd_tree = proto_tree_add_subtree(df1_tree, df1_tvb, offset, -1, ett_df1_tlv, &df1_item, "");
+	    		proto_item_set_text(cmd_tree, "%s", val_to_str_const(df1_cmd_fnc, cmd_names, "Unknown type"));		
+	    		proto_tree_add_item(cmd_tree, hf_df1_bytesize, df1_tvb, offset, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_filenum, df1_tvb, offset + 1, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_filetype, df1_tvb, offset + 2, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_elemnum, df1_tvb, offset + 3, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_subelemnum, df1_tvb, offset + 4, 1, ENC_BIG_ENDIAN);
+	    		//proto_tree_add_item(cmd_tree, hf_df1_data, df1_tvb, offset + 5, 2, ENC_BIG_ENDIAN);
+			break;
+		case DF1_CMD_LOG_WRITE:
+			cmd_tree = proto_tree_add_subtree(df1_tree, df1_tvb, offset, -1, ett_df1_tlv, &df1_item, "");
+	    		proto_item_set_text(cmd_tree, "%s", val_to_str_const(df1_cmd_fnc, cmd_names, "Unknown type"));		
+	    		proto_tree_add_item(cmd_tree, hf_df1_bytesize, df1_tvb, offset, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_filenum, df1_tvb, offset + 1, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_filetype, df1_tvb, offset + 2, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_elemnum, df1_tvb, offset + 3, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_subelemnum, df1_tvb, offset + 4, 1, ENC_BIG_ENDIAN);
+	    		proto_tree_add_item(cmd_tree, hf_df1_data, df1_tvb, offset + 5, 2, ENC_BIG_ENDIAN);
+            		break;
 	    }
 
 	    //proto_item_set_len(tlv_item, df1_length + 3);
@@ -152,7 +196,12 @@ proto_register_df1(void)
         { &hf_df1_sts, {"Status Code","df1.sts", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
         { &hf_df1_tns, {"Transaction Number","df1.tns", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL}},
         { &hf_df1_fnc, {"Function Code","df1.fnc", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
-	{ &hf_df1_data, {"Data","df1.data",FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}}
+	{ &hf_df1_data, {"Data","df1.data",FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
+    	{ &hf_df1_bytesize, {"Byte Size", "df1.bytesize", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
+    	{ &hf_df1_filenum, {"File Number", "df1.filenum", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
+    	{ &hf_df1_filetype, {"File Type", "df1.filetype", FT_UINT8, BASE_HEX, VALS(file_type), 0x0, NULL, HFILL}},
+    	{ &hf_df1_elemnum, {"Element Number", "df1.elemnum", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}},
+    	{ &hf_df1_subelemnum, {"Sub-Element Number", "df1.subelemnum", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL}}
     };
 
     static gint *ett[] = {
