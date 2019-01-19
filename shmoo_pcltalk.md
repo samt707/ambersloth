@@ -49,3 +49,7 @@
 	- Flashing Firmware w/ SNMP Backdoor
 		- use w/ snmpset command
 		
+	- Wireshark Dissector: packet-cip.h
+	- White Paper: talosintelligence.com/resources/62
+	- blog.talosintelligence.com/2018/03/ab-micrologix-1400-multiple-vulns.html
+	- blog.talosintelligence.com/2016/rockwell-snmp-vuln.html
