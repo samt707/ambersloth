@@ -29,5 +29,7 @@
   
   4. Once you have editied the Makefile, you are ready to recompile Wireshark:
   
-    ```cd /wireshark-2.6.1
-    sudo make && sudo make install```
+    ```
+    cd /wireshark-2.6.1
+    sudo make && sudo make install
+    ```
