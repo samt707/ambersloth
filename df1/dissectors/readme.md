@@ -19,7 +19,7 @@
   
   ```
   
-  3. Now, we have to edit the Makefile in order for wireshark to compile with our newly added dissector. The easiest way to do this is to start at ```/wirehshark-2.6.1/epan/dissectors/Makefile```. The construct of the Makefile is straightforward. Where ever you see a grouping of dissectors, just add the same syntax, but replace the name of the dissector with packet-df1.c. Add the following lines of code in the proper locations to your Makefile. **NOTE: Be sure to make a backup of the original Makefile before proceeding.**
+3. Now, we have to edit the Makefile in order for wireshark to compile with our newly added dissector. The easiest way to do this is to start at ```/wirehshark-2.6.1/epan/dissectors/Makefile```. The construct of the Makefile is straightforward. Where ever you see a grouping of dissectors, just add the same syntax, but replace the name of the dissector with packet-df1.c. Add the following lines of code in the proper locations to your Makefile. **NOTE: Be sure to make a backup of the original Makefile before proceeding.**
       - The first string you are going to add is ```packet-df1.lo``` in the ```am__objects_4 = ``` section
       - ```./$(DEPDIR)/packet-df1.Plo``` in the ```am__depfiles_remade = ``` section
       - ```packet-df1.c``` in the ```DISSECTOR_SRC = ``` section
@@ -27,9 +27,10 @@
         -rm -f *.tab.c```
       -  ```-rm -f ./$(DEPDIR)/packet-df1.Plo``` under ```distclean: distclean-recursive```
   
-  4. Once you have editied the Makefile, you are ready to recompile Wireshark:
+4. Once you have editied the Makefile, you are ready to recompile Wireshark:
   
-    ```
+    
     cd /wireshark-2.6.1
     sudo make && sudo make install
-    ```
+    
+5. If there are no errors, you can go ahead and open wireshark by running ```./wireshark```
