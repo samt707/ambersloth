@@ -1,5 +1,5 @@
-## DF-1 WireShark Dissector
-- [DF-1 WireShark Dissector](/df1/dissectors/packet-df1.c)
+## DF-1 Wireshark Dissector
+- [DF-1 Wireshark Dissector](/df1/dissectors/packet-df1.c)
 
 ## Notes
 
